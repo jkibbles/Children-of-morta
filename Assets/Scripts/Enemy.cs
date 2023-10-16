@@ -13,7 +13,11 @@ public class Enemy : MonoBehaviour
     private bool isPlayer = false;
     private float distance;
 
-    public int hp = 1000;
+    public int maxHp = 1000;
+    public int currentHp = 1000;
+    public HealthBar healthBar;
+    public float barSpeed = 10f;  // The speed at which the bar follows the target
+
     public int damage = 1;
 
     public bool isRanged;
@@ -46,7 +50,15 @@ public class Enemy : MonoBehaviour
         if (!isPlayer && !isRanged)
         {
             Vector3 direction = (player.transform.position - transform.position).normalized;
-            this.gameObject.GetComponent<Rigidbody2D>().velocity = direction * speed;
+            gameObject.GetComponent<Rigidbody2D>().velocity = direction * speed;
+        }
+
+        if (healthBar.gameObject != null)
+        {
+            Vector3 desiredPosition = new Vector3(transform.position.x, transform.position.y, transform.position.z);
+            desiredPosition.y += .7f;
+            Vector3 smoothedPosition = Vector3.Lerp(healthBar.gameObject.transform.position, desiredPosition, barSpeed);
+            healthBar.gameObject.transform.position = smoothedPosition;
         }
     }
 
@@ -111,5 +123,16 @@ public class Enemy : MonoBehaviour
             isRanged = false;
         }
 
+    }
+
+    public void TakeDamage(int damage)
+    {
+        currentHp -= damage;
+
+        if (currentHp <= 0)
+        {
+            Debug.Log("Ded");
+        }
+        healthBar.SetState(currentHp, maxHp);
     }
 }

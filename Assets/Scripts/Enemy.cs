@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class Enemy : MonoBehaviour
     Player playerScript;
     GameObject player;
     public float speed;
+    public string[] elementTags;  // Array of tags
 
     private bool isPlayer = false;
     private float distance;
@@ -27,11 +29,13 @@ public class Enemy : MonoBehaviour
     public float fireRange = 10f;
     public float fireSpeed = 10f;
 
+    private float timer = 0f;
+    public float triggerInterval = 1f;  // Interval in seconds
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         player = GameObject.FindGameObjectWithTag("Player");
-        isRanged = UnityEngine.Random.Range(0, 2) == 1;
+        RandomEnemy();
         if (isRanged)
             InvokeRepeating("Shoot", 0f, 1f / fireRate);
     }
@@ -41,7 +45,20 @@ public class Enemy : MonoBehaviour
         if (!isPlayer)
             DetectPlayer();
         if (isPlayer && !isRanged)
-            Attack();
+        {
+            timer += Time.deltaTime;
+
+            // Check if the timer exceeds the desired interval
+            if (timer >= triggerInterval)
+            {
+                // Call the function you want to trigger
+                Attack();
+
+                // Reset the timer
+                timer = 0f;
+            }
+        }
+            
         if(isRanged)
             rb.velocity = Vector2.zero;
     }
@@ -51,6 +68,10 @@ public class Enemy : MonoBehaviour
         {
             Vector3 direction = (player.transform.position - transform.position).normalized;
             gameObject.GetComponent<Rigidbody2D>().velocity = direction * speed;
+        }
+        else if (isPlayer && !isRanged)
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity = Vector2.zero;
         }
 
         if (healthBar.gameObject != null)
@@ -79,6 +100,7 @@ public class Enemy : MonoBehaviour
 
     private void Attack()
     {
+
         if (playerScript == null)
         {
             playerScript = player.GetComponent<Player>();
@@ -134,5 +156,33 @@ public class Enemy : MonoBehaviour
             Debug.Log("Ded");
         }
         healthBar.SetState(currentHp, maxHp);
+    }
+
+    public void RandomEnemy()
+    {
+        isRanged = UnityEngine.Random.Range(0, 2) == 1;
+        // Get a random index within the range of the tags array
+        int randomIndex = UnityEngine.Random.Range(0, elementTags.Length);
+
+        // Assign the random tag to the GameObject
+        gameObject.tag = elementTags[randomIndex];
+
+        if (gameObject.tag == "Fire")
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(1.0f, 0.5f, 0.0f, 1.0f);
+        }
+        else if(gameObject.tag == "Water")
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.blue;
+        }
+        else if (gameObject.tag == "Earth")
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.4f, 0.2f);
+        }
+        else if (gameObject.tag == "Lightning")
+        {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.yellow;
+        }
+
     }
 }

@@ -116,17 +116,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 2.5
+  elementTags:
+  - Fire
+  - Water
+  - Earth
+  - Lightning
   maxHp: 1000
   currentHp: 1000
   healthBar: {fileID: 3410572656858947674}
   barSpeed: 10
-  damage: 1
+  damage: 10
   isRanged: 0
   projectilePrefab: {fileID: 8486609873234656837, guid: 9294560758b0ad54796caa876b1ba462, type: 3}
   firePoint: {fileID: 3410572655423925874}
   fireRate: 1
   fireRange: 5
   fireSpeed: 10
+  triggerInterval: 1
 --- !u!50 &3410572655423925875
 Rigidbody2D:
   serializedVersion: 4

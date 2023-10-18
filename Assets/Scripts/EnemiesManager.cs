@@ -8,6 +8,7 @@ public class EnemiesManager : MonoBehaviour
     public GameObject enemy;
     public Vector2 spawnArea;
     public float spawnTimer;
+    public Transform parentTransform;
     float timer;
 
     private void Update()
@@ -27,6 +28,7 @@ public class EnemiesManager : MonoBehaviour
 
         position += player.transform.position;
         GameObject newEnemy = Instantiate(enemy);
+        newEnemy.transform.SetParent(parentTransform);
         newEnemy.transform.position = position;
     }
 
